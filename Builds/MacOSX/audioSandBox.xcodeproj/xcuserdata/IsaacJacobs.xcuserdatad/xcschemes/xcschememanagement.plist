@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>audioSandBox - AU.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+		<key>audioSandBox - All.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>0</integer>
+		</dict>
+		<key>audioSandBox - Shared Code.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
+		<key>audioSandBox - Standalone Plugin.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>audioSandBox - VST.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>422911F60D4E278BB5E42AC0</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9E7441670255BC98EF590838</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E77A2FA1BBD5B4442E93B086</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>ED97D7E428EB53CDFE9252C2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>FD0BB120AE87A9688784C080</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+</plist>
