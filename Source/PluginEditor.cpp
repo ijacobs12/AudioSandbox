@@ -21,7 +21,8 @@ AudioSandBoxAudioProcessorEditor::AudioSandBoxAudioProcessorEditor (AudioSandBox
     addAndMakeVisible(&slide);
     slide.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
     slide.addListener(this);
-    slide.setRange(0, 9000);
+    slide.setRange(0, 10);
+    slide.setValue(0);
 }
 
 AudioSandBoxAudioProcessorEditor::~AudioSandBoxAudioProcessorEditor()

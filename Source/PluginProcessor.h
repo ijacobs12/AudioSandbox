@@ -55,14 +55,13 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     void setSlideValue(float);
     double lowpass(double, double, double);
+    double delayLine(double);
 
 private:
-    double x = 0.0;
-    double y = 0.0;
+    double array[5000]; //500 sample delay line
+    long index; //read-write offset
     double sampRate;
-    float outputs[10];
     float slideValue;
-    float wrapOver;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioSandBoxAudioProcessor)
 };
