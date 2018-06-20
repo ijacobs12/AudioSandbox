@@ -24,6 +24,8 @@ AudioSandBoxAudioProcessor::AudioSandBoxAudioProcessor()
                        )
 #endif
 {
+    index = 0;
+    delaySamps = 1;
 }
 
 AudioSandBoxAudioProcessor::~AudioSandBoxAudioProcessor()
@@ -74,13 +76,20 @@ int AudioSandBoxAudioProcessor::getNumPrograms()
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
+double AudioSandBoxAudioProcessor::delayLine(double x) {
+    double y = array[index];
+    array[index++] = x;
+    index %= delaySamps;
+    return y;
+}
+
 int AudioSandBoxAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void AudioSandBoxAudioProcessor::setSlideValue(float num) {
-    slideValue = num;
+void AudioSandBoxAudioProcessor::setDelayValue(int num) {
+    delaySamps = num;
 }
 
 void AudioSandBoxAudioProcessor::setCurrentProgram (int index)
@@ -145,7 +154,7 @@ void AudioSandBoxAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     {
         float* channelData = buffer.getWritePointer (channel);
         for (int sample = 0; sample < buffer.getNumSamples(); sample ++) {
-            channelData[sample] = buffer.getSample(channel,sample);
+            channelData[sample] = .5*(buffer.getSample(channel,sample)+delayLine(buffer.getSample(channel,sample))); //adding or subtracting seem to do different things!
         }
         
     }

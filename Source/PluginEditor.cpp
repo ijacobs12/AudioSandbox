@@ -21,7 +21,8 @@ AudioSandBoxAudioProcessorEditor::AudioSandBoxAudioProcessorEditor (AudioSandBox
     addAndMakeVisible(&slide);
     slide.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
     slide.addListener(this);
-    slide.setRange(0, 9000);
+    slide.setRange(1,50,1);
+    slide.setValue(1);
 }
 
 AudioSandBoxAudioProcessorEditor::~AudioSandBoxAudioProcessorEditor()
@@ -29,7 +30,7 @@ AudioSandBoxAudioProcessorEditor::~AudioSandBoxAudioProcessorEditor()
 }
 
 void AudioSandBoxAudioProcessorEditor::sliderValueChanged(juce::Slider *slider) {
-    processor.setSlideValue(slider->getValue()); //this will be VERY dumb once there's more than one slider.
+    processor.setDelayValue((int)slider->getValue()); //this will be VERY dumb once there's more than one slider.
 };
 //==============================================================================
 void AudioSandBoxAudioProcessorEditor::paint (Graphics& g)
