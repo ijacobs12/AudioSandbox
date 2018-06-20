@@ -145,7 +145,6 @@ void AudioSandBoxAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     {
         float* channelData = buffer.getWritePointer (channel);
         for (int sample = 0; sample < buffer.getNumSamples(); sample ++) {
-            //channelData[sample] = buffer.getSample(channel, sample-(int)(sin(sample)*slideValue))*buffer.getSample(channel, sample);
             channelData[sample] = buffer.getSample(channel,sample);
         }
         
