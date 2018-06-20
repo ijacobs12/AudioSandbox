@@ -1,4 +1,4 @@
 # AudioSandbox
 6/18/2018 -- First Commit
 
-I don't know where this is going yet and I've been pretty busy so I'm not sure how quickly it'll get there. My current goal is to add a delay line to my audio processor: I've done some reading and it seems like there are a number of cool audio effects that one can impliment with a delay line, so that's where we'll start when I have some free time!
+The main branch is more or less a default JUCE plugin -- two audio tracks in, two audio tracks out. My plan is to implement a delay line and do different things with said delay line in different branches (like maybe a digital reverb, stereo effect, and some other stuff? I hardly even know what's possible yet but I'm excited to find out). In other words, this repository is mostly for me to play around and learn some stuff about DSP...not sure there'll be anything exciting here for a while (and when there is I'll probably put it in its own repository).
