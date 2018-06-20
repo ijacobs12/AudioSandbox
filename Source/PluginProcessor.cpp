@@ -25,6 +25,7 @@ AudioSandBoxAudioProcessor::AudioSandBoxAudioProcessor()
 #endif
 {
     index = 0;//initialize index
+    delaySamps = 1;//initialize delaySamps (even though the slider default is 0 the program will think delaySamps is 0 until the slider is moved unless it's defined here. Modulo 0 is an issue, so we've got to define it here).
 }
 
 AudioSandBoxAudioProcessor::~AudioSandBoxAudioProcessor()
@@ -35,7 +36,6 @@ AudioSandBoxAudioProcessor::~AudioSandBoxAudioProcessor()
 const String AudioSandBoxAudioProcessor::getName() const
 {
     return JucePlugin_Name;
-    return "Test";
 }
 
 bool AudioSandBoxAudioProcessor::acceptsMidi() const
@@ -58,7 +58,7 @@ bool AudioSandBoxAudioProcessor::producesMidi() const
 double AudioSandBoxAudioProcessor::delayLine(double x) {
     double y = array[index];
     array[index++] = x;
-    index %=5000; //recall that we're doing a 500-sample delay (for now. this is because Delay is initialized as an array of 50 elements in the .h file. I need to think about how to do this dynamically)
+    index %= delaySamps;
     return y;
 }
 
@@ -87,8 +87,8 @@ int AudioSandBoxAudioProcessor::getCurrentProgram()
     return 0;
 }
 
-void AudioSandBoxAudioProcessor::setSlideValue(float num) {
-    slideValue = num;
+void AudioSandBoxAudioProcessor::setDelayValue(int num) {
+    delaySamps = num;
     
 }
 
@@ -150,12 +150,11 @@ void AudioSandBoxAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     auto totalNumOutputChannels = getTotalNumOutputChannels();
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
-    float* LchannelData = buffer.getWritePointer (0);
+    float* LchannelData = buffer.getWritePointer(0);
     float* RchannelData = buffer.getWritePointer(1);
     for (int sample = 0; sample < buffer.getNumSamples(); sample ++) {
-            //channelData[sample] = buffer.getSample(channel, sample-(int)(sin(sample)*slideValue))*buffer.getSample(channel, sample);
             LchannelData[sample] = buffer.getSample(0,sample);
-            RchannelData[sample] = delayLine(LchannelData[sample]);
+            RchannelData[sample] = delayLine(buffer.getSample(1,sample));
     }
         
 

@@ -21,8 +21,8 @@ AudioSandBoxAudioProcessorEditor::AudioSandBoxAudioProcessorEditor (AudioSandBox
     addAndMakeVisible(&slide);
     slide.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
     slide.addListener(this);
-    slide.setRange(0, 10);
-    slide.setValue(0);
+    slide.setRange(1,2000,1);
+    slide.setValue(1);
 }
 
 AudioSandBoxAudioProcessorEditor::~AudioSandBoxAudioProcessorEditor()
@@ -30,17 +30,20 @@ AudioSandBoxAudioProcessorEditor::~AudioSandBoxAudioProcessorEditor()
 }
 
 void AudioSandBoxAudioProcessorEditor::sliderValueChanged(juce::Slider *slider) {
-    processor.setSlideValue(slider->getValue()); //this will be VERY dumb once there's more than one slider.
+    processor.setDelayValue((int)slider->getValue()); //this will be VERY dumb once there's more than one slider. but will there be...?
 };
 //==============================================================================
 void AudioSandBoxAudioProcessorEditor::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
+    g.setColour(Colours::aqua);
+    g.drawText("L/R channel sample difference", getBounds().removeFromBottom(getHeight()/4), Justification::centred);
 
 }
 
 void AudioSandBoxAudioProcessorEditor::resized()
 {
-    slide.setBounds(getLocalBounds());
+    Rectangle<int> bounds = getLocalBounds();
+    slide.setBounds(bounds.removeFromTop(3*bounds.getHeight()/4));
 }
