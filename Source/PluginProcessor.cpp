@@ -83,7 +83,7 @@ float AudioSandBoxAudioProcessor::delayLine(float input, float* array, float& ar
     float y = array[(int)array_index]+diff*(array[(int)array_index-1]-array[(int)array_index]); //interpolate the fractional part!
     array[(int)array_index++] = input;
     array_index = fmod(array_index,delaySamps);
-    return y;
+    return y;//
 }
 
 
