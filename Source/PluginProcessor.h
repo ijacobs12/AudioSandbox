@@ -53,14 +53,13 @@ public:
     //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
-    void setDelayValue(int);
-    double delayLine(double, double*);
-    double fractionalDelay(double, double, double*);
+    void setDelayValue(float);
+    float delayLine(float, float*, float&);
 
 private:
-    double leftArray[200], rightArray[200];
-    int index;
-    int delaySamps;
+    float leftArray[200], rightArray[200];
+    float left_index, right_index;
+    float delaySamps;
     double sampRate;
     float slideValue;
     //==============================================================================

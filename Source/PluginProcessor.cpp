@@ -24,8 +24,9 @@ AudioSandBoxAudioProcessor::AudioSandBoxAudioProcessor()
                        )
 #endif
 {
-    index = 0;
-    delaySamps = 1;
+    left_index = 0.;
+    right_index = 0.;
+    delaySamps = 1.;
 }
 
 AudioSandBoxAudioProcessor::~AudioSandBoxAudioProcessor()
@@ -76,25 +77,22 @@ int AudioSandBoxAudioProcessor::getNumPrograms()
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-double AudioSandBoxAudioProcessor::delayLine(double x, double* array) {
-    double y = array[index];
-    array[index++] = x;
-    index %= delaySamps;
+float AudioSandBoxAudioProcessor::delayLine(float input, float* array, float& array_index) {
+    float diff = fmod(array_index, 1.);
+    array_index -= diff;
+    float y = array[(int)array_index]+diff*(array[(int)array_index-1]-array[(int)array_index]); //interpolate the fractional part!
+    array[(int)array_index++] = input;
+    array_index = fmod(array_index,delaySamps);
     return y;
 }
 
-double AudioSandBoxAudioProcessor::fractionalDelay(double x, double frac, double* array) { //implemented with help from https://ccrma.stanford.edu/~jos/Interpolation/Linear_Interpolation.html
-    double y = array[index]+frac*(array[index-1]-array[index]);
-    return y;
-    
-}
 
 int AudioSandBoxAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void AudioSandBoxAudioProcessor::setDelayValue(int num) {
+void AudioSandBoxAudioProcessor::setDelayValue(float num) {
     delaySamps = num;
 }
 
@@ -159,8 +157,8 @@ void AudioSandBoxAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     float* channelDataLeft = buffer.getWritePointer (0);
     float* channelDataRight = buffer.getWritePointer (1);
     for (int sample = 0; sample < buffer.getNumSamples(); sample ++) {
-        channelDataLeft[sample] = .5*(buffer.getSample(0,sample)-delayLine(buffer.getSample(0,sample), leftArray)); //adding or subtracting seem to do different things!
-        channelDataRight[sample] = .5*(buffer.getSample(1,sample)+delayLine(buffer.getSample(1,sample), rightArray));
+        channelDataLeft[sample] = .5*(buffer.getSample(0,sample)-delayLine(buffer.getSample(0,sample), leftArray, left_index)); //adding or subtracting seem to do different things!
+        channelDataRight[sample] = .5*(buffer.getSample(1,sample)-delayLine(buffer.getSample(1,sample), rightArray, right_index));
     }
         
 
