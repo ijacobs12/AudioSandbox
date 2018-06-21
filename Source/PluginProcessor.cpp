@@ -76,11 +76,17 @@ int AudioSandBoxAudioProcessor::getNumPrograms()
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-double AudioSandBoxAudioProcessor::delayLine(double x) {
+double AudioSandBoxAudioProcessor::delayLine(double x, double* array) {
     double y = array[index];
     array[index++] = x;
     index %= delaySamps;
     return y;
+}
+
+double AudioSandBoxAudioProcessor::fractionalDelay(double x, double frac, double* array) { //implemented with help from https://ccrma.stanford.edu/~jos/Interpolation/Linear_Interpolation.html
+    double y = array[index]+frac*(array[index-1]-array[index]);
+    return y;
+    
 }
 
 int AudioSandBoxAudioProcessor::getCurrentProgram()
@@ -150,14 +156,14 @@ void AudioSandBoxAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     auto totalNumOutputChannels = getTotalNumOutputChannels();
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        float* channelData = buffer.getWritePointer (channel);
-        for (int sample = 0; sample < buffer.getNumSamples(); sample ++) {
-            channelData[sample] = .5*(buffer.getSample(channel,sample)+delayLine(buffer.getSample(channel,sample))); //adding or subtracting seem to do different things!
-        }
-        
+    float* channelDataLeft = buffer.getWritePointer (0);
+    float* channelDataRight = buffer.getWritePointer (1);
+    for (int sample = 0; sample < buffer.getNumSamples(); sample ++) {
+        channelDataLeft[sample] = .5*(buffer.getSample(0,sample)-delayLine(buffer.getSample(0,sample), leftArray)); //adding or subtracting seem to do different things!
+        channelDataRight[sample] = .5*(buffer.getSample(1,sample)+delayLine(buffer.getSample(1,sample), rightArray));
     }
+        
+
 }
 
 //==============================================================================

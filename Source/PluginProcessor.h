@@ -54,10 +54,11 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     void setDelayValue(int);
-    double delayLine(double);
+    double delayLine(double, double*);
+    double fractionalDelay(double, double, double*);
 
 private:
-    double array[200];
+    double leftArray[200], rightArray[200];
     int index;
     int delaySamps;
     double sampRate;
