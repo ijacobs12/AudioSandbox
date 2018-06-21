@@ -57,7 +57,7 @@ public:
     float delayLine(float, float*, float&);
 
 private:
-    float leftArray[200], rightArray[200];
+    float leftArray[2000], rightArray[2000];
     float left_index, right_index;
     float delaySamps;
     double sampRate;

@@ -80,10 +80,12 @@ int AudioSandBoxAudioProcessor::getNumPrograms()
 float AudioSandBoxAudioProcessor::delayLine(float input, float* array, float& array_index) {
     float diff = fmod(array_index, 1.);
     array_index -= diff;
-    float y = array[(int)array_index]+diff*(array[(int)array_index-1]-array[(int)array_index]); //interpolate the fractional part!
+    int prev = floorf(array_index);
+    int next = fmod(ceilf(array_index), delaySamps);
+    float y = array[prev]+diff*(array[next]-array[prev]); //interpolate the fractional part!
     array[(int)array_index++] = input;
     array_index = fmod(array_index,delaySamps);
-    return y;//
+    return y;
 }
 
 
@@ -157,8 +159,9 @@ void AudioSandBoxAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     float* channelDataLeft = buffer.getWritePointer (0);
     float* channelDataRight = buffer.getWritePointer (1);
     for (int sample = 0; sample < buffer.getNumSamples(); sample ++) {
-        channelDataLeft[sample] = .5*(buffer.getSample(0,sample)-delayLine(buffer.getSample(0,sample), leftArray, left_index)); //adding or subtracting seem to do different things!
-        channelDataRight[sample] = .5*(buffer.getSample(1,sample)-delayLine(buffer.getSample(1,sample), rightArray, right_index));
+        channelDataLeft[sample] = .5*(buffer.getSample(0,sample)+delayLine(buffer.getSample(0,sample), leftArray, left_index)); //adding or subtracting seem to do different things!
+        channelDataRight[sample] = .5*(buffer.getSample(1,sample)+delayLine(buffer.getSample(1,sample), rightArray, right_index));
+
     }
         
 
