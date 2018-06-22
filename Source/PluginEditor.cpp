@@ -20,18 +20,19 @@ AudioSandBoxAudioProcessorEditor::AudioSandBoxAudioProcessorEditor (AudioSandBox
     setSize (400, 300);
     addAndMakeVisible(&slide);
     slide.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
-    slide.addListener(this);
-    slide.setRange(1,1000);
-    slide.setValue(1.);
+    slidePtr.reset(new AudioProcessorValueTreeState::SliderAttachment(processor.tree, "slider Value", slide));
 }
 
 AudioSandBoxAudioProcessorEditor::~AudioSandBoxAudioProcessorEditor()
 {
+    slidePtr.reset();
 }
 
-void AudioSandBoxAudioProcessorEditor::sliderValueChanged(juce::Slider *slider) {
-    processor.setDelayValue(slider->getValue()); //this will be VERY dumb once there's more than one slider.
-};
+void AudioSandBoxAudioProcessorEditor::sliderValueChanged(Slider* slider) {
+    
+}
+
+
 //==============================================================================
 void AudioSandBoxAudioProcessorEditor::paint (Graphics& g)
 {

@@ -53,13 +53,15 @@ public:
     //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
-    void setDelayValue(float);
-    float delayLine(float, float*, float&);
+    float delayLineLeft(float);
+    float delayLineRight(float);
+    AudioProcessorValueTreeState tree;
 
 private:
     float leftArray[2000], rightArray[2000];
     float left_index, right_index;
-    float delaySamps;
+    bool finishedLeftLoop, finishedRightLoop;
+    float delaySampsL, delaySampsR;
     double sampRate;
     float slideValue;
     //==============================================================================

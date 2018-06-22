@@ -21,12 +21,20 @@ AudioSandBoxAudioProcessor::AudioSandBoxAudioProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+tree(*this,nullptr)
 #endif
 {
+
     left_index = 0.;
     right_index = 0.;
-    delaySamps = 1.;
+    delaySampsL = 1.;
+    delaySampsR = 1;
+    finishedLeftLoop = false;
+    finishedRightLoop = false;
+    NormalisableRange<float> slideRange (1.,500.);
+    tree.createAndAddParameter("slider Value", "slidVal", "slidVal", slideRange, 1., nullptr, nullptr);
+    
 }
 
 AudioSandBoxAudioProcessor::~AudioSandBoxAudioProcessor()
@@ -77,26 +85,44 @@ int AudioSandBoxAudioProcessor::getNumPrograms()
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-float AudioSandBoxAudioProcessor::delayLine(float input, float* array, float& array_index) {
-    float diff = fmod(array_index, 1.);
-    array_index -= diff;
-    int prev = floorf(array_index);
-    int next = ceilf(array_index);
-    float y = array[prev]+diff*(array[next]-array[prev]); //interpolate the fractional part!
-    array[(int)array_index++] = input;
-    array_index = fmod(array_index,delaySamps);
+float AudioSandBoxAudioProcessor::delayLineLeft(float input) {
+    finishedLeftLoop = false;
+    float diff = fmod(left_index, 1.);
+    left_index -= diff;
+    int prev = floorf(left_index);
+    int next = ceilf(left_index);
+    float y = leftArray[prev]+diff*(leftArray[next]-leftArray[prev]); //interpolate the fractional part!
+    leftArray[(int)left_index++] = input;
+    if(left_index != fmod(left_index,delaySampsL)){
+        left_index = fmod(left_index,delaySampsL);
+        finishedLeftLoop = true;
+    }
     return y;
 }
 
+//there must be a more elegant way of doing this than splitting it up left right. hopefully I figure it out one day! 'till then....
+
+float AudioSandBoxAudioProcessor::delayLineRight(float input) {
+    finishedRightLoop = false;
+    float diff = fmod(right_index, 1.);
+    right_index -= diff;
+    int prev = floorf(right_index);
+    int next = ceilf(right_index);
+    float y = rightArray[prev]+diff*(rightArray[next]-rightArray[prev]); //interpolate the fractional part!
+    rightArray[(int)right_index++] = input;
+    if(right_index != fmod(right_index,delaySampsR)){
+        right_index = fmod(right_index,delaySampsR);
+        finishedRightLoop = true;
+
+    }
+    return y;
+}
 
 int AudioSandBoxAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void AudioSandBoxAudioProcessor::setDelayValue(float num) {
-    delaySamps = num;
-}
 
 void AudioSandBoxAudioProcessor::setCurrentProgram (int index)
 {
@@ -152,6 +178,7 @@ bool AudioSandBoxAudioProcessor::isBusesLayoutSupported (const BusesLayout& layo
 
 void AudioSandBoxAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
+
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
@@ -159,8 +186,10 @@ void AudioSandBoxAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiB
     float* channelDataLeft = buffer.getWritePointer (0);
     float* channelDataRight = buffer.getWritePointer (1);
     for (int sample = 0; sample < buffer.getNumSamples(); sample ++) {
-        channelDataLeft[sample] = .5*(buffer.getSample(0,sample)-delayLine(buffer.getSample(0,sample), leftArray, left_index)); //adding or subtracting seem to do different things!
-        channelDataRight[sample] = .5*(buffer.getSample(1,sample)-delayLine(buffer.getSample(1,sample), rightArray, right_index));
+        if(finishedRightLoop)delaySampsR = *tree.getRawParameterValue("slider Value");
+        if(finishedLeftLoop)delaySampsL = *tree.getRawParameterValue("slider Value");
+        channelDataLeft[sample] = .5*(buffer.getSample(0,sample)-delayLineLeft(buffer.getSample(0,sample))); //adding or subtracting seem to do different things!
+        channelDataRight[sample] = .5*(buffer.getSample(1,sample)-delayLineRight(buffer.getSample(1,sample)));
 
     }
         

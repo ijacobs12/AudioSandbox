@@ -25,9 +25,10 @@ public:
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
-    void sliderValueChanged(juce::Slider*) override;
+    void sliderValueChanged(Slider*) override;
 
 private:
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> slidePtr;
     Slider slide;
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
